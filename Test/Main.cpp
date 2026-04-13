@@ -36,7 +36,7 @@ int main()
     std::cout << "Number of tasks: " << numTasks << '\n';
     std::cout << "Work per task: " << workPerTask << "\n\n";
 
-    std::cout << "\033[1;32m<---------Thread pool time test : no priority--------->\033[0m\n";
+    std::cout << "\033[1;32m<---------Thread pool time test: no priority--------->\033[0m\n";
 
     auto start = std::chrono::high_resolution_clock::now();
 
@@ -54,7 +54,7 @@ int main()
     std::cout << "Time: " << time << " s\n";
     std::cout << "Tasks/sec: " << (numTasks / time) << "\n\n";
 
-    std::cout << "\033[1;32m<---------Thread pool time test : low priority starvation--------->\033[0m\n";
+    std::cout << "\033[1;32m<---------Thread pool time test: low priority starvation--------->\033[0m\n";
 
     Kayou::Priority priority;
 
@@ -76,7 +76,7 @@ int main()
     std::cout << "Time: " << time << " s\n";
     std::cout << "Tasks/sec: " << (numTasks / time) << "\n\n";
 
-    std::cout << "\033[1;32m<---------Thread pool time test : enqueue latency--------->\033[0m\n";
+    std::cout << "\033[1;32m<---------Thread pool time test: enqueue latency--------->\033[0m\n";
 
     auto start2 = std::chrono::high_resolution_clock::now();
 
@@ -93,7 +93,7 @@ int main()
     std::cout << "Time: " << time << " s\n";
     std::cout << "Avg enqueue time: " << (time / numTasks) * 1e+9 << " ns\n\n";
 
-    std::cout << "\033[1;33m<---------Single thread time test : execution time--------->\033[0m\n";
+    std::cout << "\033[1;33m<---------Single thread time test: execution time--------->\033[0m\n";
 
     auto start3 = std::chrono::high_resolution_clock::now();
 
@@ -111,7 +111,7 @@ int main()
     std::cout << "Time: " << time << " s\n";
     std::cout << "Tasks/sec: " << (numTasks / time) << "\n\n";
 
-    std::cout << "\033[1;33m<---------Single thread time test : enqueue latency--------->\033[0m\n";
+    std::cout << "\033[1;33m<---------Single thread time test: enqueue latency--------->\033[0m\n";
 
     auto start4 = std::chrono::high_resolution_clock::now();
 

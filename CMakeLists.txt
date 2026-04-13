@@ -59,6 +59,12 @@ else ()
     target_compile_options(KThreads PUBLIC -Wall -Wextra -Wpedantic -Werror)
 endif ()
 
+option(KTHREAD_PERMISSIVE_EXCEPTIONS "Tries to guarantee code is still executed despite user error" ON)
+
+if (KTHREAD_PERMISSIVE_EXCEPTIONS)
+    target_compile_definitions(KThreads PRIVATE PERMISSIVE_EXCEPTIONS)
+endif()
+
 # Build position independent code.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 

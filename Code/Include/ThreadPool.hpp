@@ -22,7 +22,7 @@ namespace Kayou
 	private:
 		std::unordered_map<const char*, std::unique_ptr<ThreadManager>> m_threadManagers{};
 		uint32_t m_maxErrorsCount = 30u;
-		uint32_t m_nbErrors = 0;
-		bool m_tooManyErrors = false;
+		uint32_t m_nbErrors = 0u;
+		bool m_areTooManyErrors = false;
 	};
 }

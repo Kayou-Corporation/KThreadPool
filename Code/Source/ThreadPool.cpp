@@ -17,13 +17,13 @@ namespace Kayou
 
 	void ThreadPool::EnqueueTask(const char* queueName, std::move_only_function<void()> task, Priority priority)
 	{
-		if (m_threadManagers.find(queueName) == m_threadManagers.end()) [[unlikely]]
+		[[unlikely]] if (m_threadManagers.find(queueName) == m_threadManagers.end())
 		{
 #if defined (PERMISSIVE_EXCEPTIONS)
 			task();
 #endif
 
-			if (!m_tooManyErrors)
+			if (!m_areTooManyErrors)
 				std::cerr << "\033[1;31m[KThreads error] Wrong queue name when enqueueing: " << queueName << "\033[0m\n";
 			else
 				return;
@@ -32,15 +32,15 @@ namespace Kayou
 			if (m_nbErrors >= m_maxErrorsCount)
 			{
 				std::cerr << "\033[1;33mToo many errors displayed, following errors for this issue won't be displayed\033[0m\n";
-				m_tooManyErrors = true;
+				m_areTooManyErrors = true;
 			}
 			return;
 		}
 
-		if (m_tooManyErrors) [[unlikely]]
+		[[unlikely]] if (m_areTooManyErrors)
 		{
 			m_nbErrors = 0u;
-			m_tooManyErrors = false;
+			m_areTooManyErrors = false;
 		}
 
 		m_threadManagers.at(queueName)->Enqueue(std::move(task), priority);

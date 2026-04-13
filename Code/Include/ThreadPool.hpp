@@ -14,12 +14,15 @@ namespace Kayou
 		~ThreadPool();
 
 		void InitQueue(const char* queueName, uint8_t numThreads);
-		void EnqueueTask(const char* queueName, std::move_only_function<void()> task, Priority priority = Priority::High) const;
+		void EnqueueTask(const char* queueName, std::move_only_function<void()> task, Priority priority = Priority::High);
 		void WaitUntilQueueFinished(const char* queueName) const;
 		void WaitUntilAllFinished() const;
 		void ReleaseQueue(const char* queueName);
 
 	private:
-		std::unordered_map<const char*, std::unique_ptr<ThreadManager>> m_threadManagers;
+		std::unordered_map<const char*, std::unique_ptr<ThreadManager>> m_threadManagers{};
+		uint32_t m_maxErrorsCount = 30u;
+		uint32_t m_nbErrors = 0u;
+		bool m_areTooManyErrors = false;
 	};
 }

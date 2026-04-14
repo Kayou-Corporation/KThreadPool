@@ -2,6 +2,7 @@
 
 #include <ranges>
 #include <iostream>
+#include <syncstream>
 
 namespace Kayou
 {
@@ -10,28 +11,30 @@ namespace Kayou
 		m_threadManagers.clear();
 	}
 
-	void ThreadPool::InitQueue(const char* queueName, uint8_t numThreads)
+	void ThreadPool::InitQueue(std::string_view queueName, uint8_t numThreads)
 	{
 		m_threadManagers.try_emplace(queueName, std::make_unique<ThreadManager>(queueName, numThreads));
 	}
 
-	void ThreadPool::EnqueueTask(const char* queueName, std::move_only_function<void()> task, Priority priority)
+	void ThreadPool::EnqueueTask(std::string_view queueName, std::move_only_function<void()> task, Priority priority)
 	{
-		[[unlikely]] if (m_threadManagers.find(queueName) == m_threadManagers.end())
+		std::unique_lock<std::mutex> lock(m_mutex);
+		[[unlikely]] if (!m_threadManagers.contains(queueName))
 		{
+			lock.unlock();
 #if defined (PERMISSIVE_EXCEPTIONS)
 			task();
 #endif
 
 			if (!m_areTooManyErrors)
-				std::cerr << "\033[1;31m[KThreads error] Wrong queue name when enqueueing: " << queueName << "\033[0m\n";
+				std::osyncstream(std::cerr) << "\033[1;31m[KThreads error] Wrong queue name when enqueueing: " << queueName << "\033[0m\n";
 			else
 				return;
 
 			++m_nbErrors;
 			if (m_nbErrors >= m_maxErrorsCount)
 			{
-				std::cerr << "\033[1;33mToo many errors displayed, following errors for this issue won't be displayed\033[0m\n";
+				std::osyncstream(std::cerr) << "\033[1;33mToo many errors displayed, following errors for this issue won't be displayed\033[0m\n";
 				m_areTooManyErrors = true;
 			}
 			return;
@@ -46,11 +49,11 @@ namespace Kayou
 		m_threadManagers.at(queueName)->Enqueue(std::move(task), priority);
 	}
 
-	void ThreadPool::WaitUntilQueueFinished(const char* queueName) const
+	void ThreadPool::WaitUntilQueueFinished(std::string_view queueName) const
 	{
-		if (m_threadManagers.find(queueName) == m_threadManagers.end()) [[unlikely]]
+		[[unlikely]] if (!m_threadManagers.contains(queueName))
 		{
-			std::cerr << "\033[1;31m[KThreads error] Wrong queue name when checking for finished, expect undefined behavior: " << queueName << "\033[0m\n";
+			std::osyncstream(std::cerr) << "\033[1;31m[KThreads error] Wrong queue name when checking for finished, expect undefined behavior: " << queueName << "\033[0m\n";
 			return;
 		}
 
@@ -65,7 +68,7 @@ namespace Kayou
 		}
 	}
 
-	void ThreadPool::ReleaseQueue(const char* queueName)
+	void ThreadPool::ReleaseQueue(std::string_view queueName)
 	{
 		m_threadManagers.erase(queueName);
 	}

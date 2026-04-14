@@ -7,7 +7,7 @@ namespace Kayou
 	class ThreadManager
 	{
 	public:
-		ThreadManager(const char* name, uint8_t numThreads);
+		ThreadManager(std::string_view name, uint8_t numThreads);
 		~ThreadManager();
 
 		void Enqueue(std::move_only_function<void()> task, Priority priority = Priority::High);

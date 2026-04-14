@@ -10,7 +10,7 @@ namespace Kayou
 	{
 		m_thread = std::thread(&Thread::CheckQueue, this);
 
-		std::string threadName = std::string(name) + "Thread";
+		const std::string threadName = std::string(name) + "Thread";
 		SetThreadName(m_thread, threadName);
 	}
 
@@ -34,15 +34,12 @@ namespace Kayou
 
 	void Thread::Enqueue(std::move_only_function<void()> task)
 	{
+		m_tasksRemaining.fetch_add(1u, std::memory_order_release);
 		{
 			std::lock_guard<std::mutex> lock(m_mutex);
-
 			m_taskQueue.emplace(std::move(task));
-
-			m_waitCondition.notify_one();
 		}
-
-		m_tasksRemaining.fetch_add(1u, std::memory_order_release);
+		m_waitCondition.notify_one();
 	}
 
 	void Thread::WaitUntilFinished()

@@ -18,19 +18,12 @@ int main()
 	Kayou::ThreadPool threadPool;
 	threadPool.InitQueue("Worker", std::thread::hardware_concurrency());
 	threadPool.InitQueue("Kayou", std::thread::hardware_concurrency());
-	threadPool.InitQueue("Enqueue", 8);
+	threadPool.InitQueue("Enqueue", std::thread::hardware_concurrency());
 
     Kayou::Thread thread("Single");
 
     constexpr uint32_t numTasks = 1'000'000;
     constexpr uint32_t workPerTask = 10000;
-
-    auto work = [=]()
-        {
-            DoWork(workPerTask);
-        };
-
-    auto task = [] {};
 
     std::cout << "\033[1;31m<------------KThreads------------>\033[0m\n";
     std::cout << "Number of tasks: " << numTasks << '\n';
@@ -42,7 +35,7 @@ int main()
 
     for (uint32_t i = 0; i < numTasks; ++i)
     {
-        threadPool.EnqueueTask("Worker", std::move(work));
+        threadPool.EnqueueTask("Worker", [=]() { DoWork(workPerTask); });
     }
 
     threadPool.WaitUntilQueueFinished("Worker");
@@ -64,7 +57,7 @@ int main()
     {
         priority = i % 10 == 0 ? Kayou::Priority::Low : Kayou::Priority::High;
 
-        threadPool.EnqueueTask("Kayou", std::move(work), priority);
+        threadPool.EnqueueTask("Kayou", [=]() { DoWork(workPerTask); }, priority);
     }
 
     threadPool.WaitUntilQueueFinished("Kayou");
@@ -82,13 +75,14 @@ int main()
 
     for (uint32_t i = 0; i < numTasks; ++i)
     {
-        threadPool.EnqueueTask("Enqueue", std::move(task));
+        threadPool.EnqueueTask("Enqueue", [] {});
     }
 
     auto end2 = std::chrono::high_resolution_clock::now();
 
     threadPool.WaitUntilAllFinished();
 
+	threadPool.ReleaseQueue("Enqueue");
     time = std::chrono::duration<double>(end2 - start2).count();
     std::cout << "Time: " << time << " s\n";
     std::cout << "Avg enqueue time: " << (time / numTasks) * 1e+9 << " ns\n\n";
@@ -99,7 +93,7 @@ int main()
 
     for (uint32_t i = 0; i < numTasks; ++i)
     {
-        thread.Enqueue(std::move(work));
+        thread.Enqueue([=]() { DoWork(workPerTask); });
     }
 
     thread.WaitUntilFinished();
@@ -117,7 +111,7 @@ int main()
 
     for (uint32_t i = 0; i < numTasks; ++i)
     {
-        thread.Enqueue(std::move(task));
+        thread.Enqueue([] {});
     }
 
     auto end4 = std::chrono::high_resolution_clock::now();

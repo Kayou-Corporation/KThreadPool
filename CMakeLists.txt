@@ -97,7 +97,7 @@ set_target_properties(KThreads PROPERTIES OUTPUT_NAME "${PROJECT_NAME}-${PROJECT
 # Enable CTests
 enable_testing()
 
-option(BUILD_EXECUTABLE "Build an executable to live debug the queue" ON)
+option(BUILD_EXECUTABLE "Build an executable to live debug the queue" OFF)
 
 if (BUILD_EXECUTABLE)
     add_subdirectory(Test)

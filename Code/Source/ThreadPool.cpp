@@ -28,10 +28,10 @@ namespace Kayou
 			task();
 #endif
 
-			if (!m_areTooManyErrors)
-				std::osyncstream(std::cerr) << "\033[1;31m[KThreads error] Wrong queue name when enqueueing: " << queueName << "\033[0m\n";
-			else
+			if (m_areTooManyErrors)
 				return;
+
+			std::osyncstream(std::cerr) << "\033[1;31m[KThreads error] Wrong queue name when enqueueing: " << queueName << "\033[0m\n";
 
 			++m_nbErrors;
 			if (m_nbErrors >= m_maxErrorsCount)

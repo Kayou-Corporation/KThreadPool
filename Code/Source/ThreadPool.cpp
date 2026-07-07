@@ -4,6 +4,8 @@
 #include <iostream>
 #include <syncstream>
 
+#include <Preprocessor.hpp>
+
 namespace Kayou
 {
 	ThreadPool::~ThreadPool()
@@ -19,7 +21,7 @@ namespace Kayou
 	void ThreadPool::EnqueueTask(std::string_view queueName, std::move_only_function<void()> task, Priority priority)
 	{
 		std::unique_lock<std::mutex> lock(m_mutex);
-		[[unlikely]] if (!m_threadManagers.contains(queueName))
+		KUNLIKELY if (!m_threadManagers.contains(queueName))
 		{
 			lock.unlock();
 #if defined (PERMISSIVE_EXCEPTIONS)
@@ -40,7 +42,7 @@ namespace Kayou
 			return;
 		}
 
-		[[unlikely]] if (m_areTooManyErrors)
+		KUNLIKELY if (m_areTooManyErrors)
 		{
 			m_nbErrors = 0u;
 			m_areTooManyErrors = false;
@@ -51,7 +53,7 @@ namespace Kayou
 
 	void ThreadPool::WaitUntilQueueFinished(std::string_view queueName) const
 	{
-		[[unlikely]] if (!m_threadManagers.contains(queueName))
+		KUNLIKELY if (!m_threadManagers.contains(queueName))
 		{
 			std::osyncstream(std::cerr) << "\033[1;31m[KThreads error] Wrong queue name when checking for finished, expect undefined behavior: " << queueName << "\033[0m\n";
 			return;

@@ -1,0 +1,3 @@
+[submodule "Libs/KUtils"]
+	path = Libs/KUtils
+	url = https://github.com/Kayou-Corporation/KUtils.git

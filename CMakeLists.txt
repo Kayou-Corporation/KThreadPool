@@ -73,6 +73,11 @@ set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# --------------------------------------- #
+#              SUB DIRECTORIES            #
+# --------------------------------------- #
+add_subdirectory(Libs)
+target_link_libraries(KThreads PUBLIC KUtils)
 
 
 #---------------------------------------#

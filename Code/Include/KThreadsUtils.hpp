@@ -12,7 +12,13 @@
 
 inline void SetThreadName(std::thread& t, const std::string& name)
 {
-	SetThreadDescription(t.native_handle(), std::wstring(name.begin(), name.end()).c_str());
+	std::thread::native_handle_type nativeHandle = t.native_handle();
+	HANDLE hThread = reinterpret_cast<HANDLE>(nativeHandle);
+
+	if (hThread != INVALID_HANDLE_VALUE)
+	{
+		SetThreadDescription(hThread, std::wstring(name.begin(), name.end()).c_str());
+	}
 }
 #endif
 #if defined(__linux__)

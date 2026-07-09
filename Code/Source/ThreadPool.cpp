@@ -18,7 +18,7 @@ namespace Kayou
 		m_threadManagers.try_emplace(queueName, std::make_unique<ThreadManager>(queueName, numThreads));
 	}
 
-	void ThreadPool::EnqueueTask(std::string_view queueName, std::move_only_function<void()> task, Priority priority)
+	void ThreadPool::EnqueueTask(std::string_view queueName, std::function<void()> task, Priority priority)
 	{
 		std::unique_lock<std::mutex> lock(m_mutex);
 		KUNLIKELY if (!m_threadManagers.contains(queueName))

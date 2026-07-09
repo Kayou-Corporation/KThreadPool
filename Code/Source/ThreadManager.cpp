@@ -47,7 +47,7 @@ namespace Kayou
 			m_lowPriorityTaskQueue.pop();
 	}
 
-	void ThreadManager::Enqueue(std::move_only_function<void()> task, const Priority priority)
+	void ThreadManager::Enqueue(std::function<void()> task, const Priority priority)
 	{
 		m_tasksRemaining.fetch_add(1u, std::memory_order_release);
 		{
@@ -75,7 +75,7 @@ namespace Kayou
 	{
 		while (true)
 		{
-			std::move_only_function<void()> task;
+			std::function<void()> task;
 
 			{
 				std::unique_lock<std::mutex> lock(m_mutex);

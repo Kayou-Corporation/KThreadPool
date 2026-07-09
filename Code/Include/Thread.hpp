@@ -10,13 +10,13 @@ namespace Kayou
 		Thread(const char* name);
 		~Thread();
 
-		void Enqueue(std::move_only_function<void()> task);
+		void Enqueue(std::function<void()> task);
 		void WaitUntilFinished();
 
 	private:
 		std::thread m_thread;
 
-		std::queue<std::move_only_function<void()>> m_taskQueue;
+		std::queue<std::function<void()>> m_taskQueue;
 
 		std::mutex m_mutex;
 		std::mutex m_finishMutex;

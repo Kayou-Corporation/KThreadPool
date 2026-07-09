@@ -6,7 +6,7 @@
 
 namespace Kayou
 {
-	ThreadManager::ThreadManager(const char* name, const uint8_t numThreads) : m_numThreads(numThreads)
+	ThreadManager::ThreadManager(std::string_view name, const uint8_t numThreads) : m_numThreads(numThreads)
 	{
 		for (uint8_t i = 0u; i < m_numThreads; ++i)
 		{
@@ -49,9 +49,9 @@ namespace Kayou
 
 	void ThreadManager::Enqueue(std::move_only_function<void()> task, const Priority priority)
 	{
+		m_tasksRemaining.fetch_add(1u, std::memory_order_release);
 		{
 			std::lock_guard<std::mutex> lock(m_mutex);
-
 			if (priority == Priority::High)
 			{
 				m_highPriorityTaskQueue.emplace(std::move(task));
@@ -60,11 +60,9 @@ namespace Kayou
 			{
 				m_lowPriorityTaskQueue.emplace(std::move(task));
 			}
-
-			m_waitCondition.notify_one();
+			
 		}
-
-		m_tasksRemaining.fetch_add(1u, std::memory_order_release);
+		m_waitCondition.notify_one();
 	}
 
 	void ThreadManager::WaitUntilFinished()

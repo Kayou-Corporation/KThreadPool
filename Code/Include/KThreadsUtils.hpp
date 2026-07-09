@@ -7,7 +7,9 @@
 #include <thread>
 #include <condition_variable>
 
-#if defined(_WIN32)
+#include <Platform.hpp>
+
+#if defined(KWINDOWS)
 #include <windows.h>
 
 inline void SetThreadName(std::thread& t, const std::string& name)
@@ -15,7 +17,7 @@ inline void SetThreadName(std::thread& t, const std::string& name)
 	SetThreadDescription(t.native_handle(), std::wstring(name.begin(), name.end()).c_str());
 }
 #endif
-#if defined(__linux__)
+#if defined(KLINUX)
 #include <pthread.h>
 
 inline void SetThreadName(std::thread& t, const std::string& name)

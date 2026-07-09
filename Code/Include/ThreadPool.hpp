@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include <unordered_map>
+#include <string_view>
 
 #include "ThreadManager.hpp"
 
@@ -13,14 +14,15 @@ namespace Kayou
 		ThreadPool() = default;
 		~ThreadPool();
 
-		void InitQueue(const char* queueName, uint8_t numThreads);
-		void EnqueueTask(const char* queueName, std::move_only_function<void()> task, Priority priority = Priority::High);
-		void WaitUntilQueueFinished(const char* queueName) const;
+		void InitQueue(std::string_view queueName, uint8_t numThreads);
+		void EnqueueTask(std::string_view queueName, std::move_only_function<void()> task, Priority priority = Priority::High);
+		void WaitUntilQueueFinished(std::string_view queueName) const;
 		void WaitUntilAllFinished() const;
-		void ReleaseQueue(const char* queueName);
+		void ReleaseQueue(std::string_view queueName);
 
 	private:
-		std::unordered_map<const char*, std::unique_ptr<ThreadManager>> m_threadManagers{};
+		std::mutex m_mutex;
+		std::unordered_map<std::string_view, std::unique_ptr<ThreadManager>> m_threadManagers{};
 		uint32_t m_maxErrorsCount = 30u;
 		uint32_t m_nbErrors = 0u;
 		bool m_areTooManyErrors = false;

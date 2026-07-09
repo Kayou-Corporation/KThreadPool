@@ -71,7 +71,7 @@ namespace Kayou
 			}
 			catch (const std::exception& e)
 			{
-				std::osyncstream(std::cerr) << e.what() << '\n';
+				std::cerr << e.what() << '\n';
 			}
 
 			const uint32_t remaining = m_tasksRemaining.fetch_sub(1u, std::memory_order_acq_rel) - 1u;

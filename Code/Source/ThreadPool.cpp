@@ -31,12 +31,12 @@ namespace Kayou
 			if (m_areTooManyErrors)
 				return;
 
-			std::osyncstream(std::cerr) << "\033[1;31m[KThreads error] Wrong queue name when enqueueing: " << queueName << "\033[0m\n";
+			std::cerr << "\033[1;31m[KThreads error] Wrong queue name when enqueueing: " << queueName << "\033[0m\n";
 
 			++m_nbErrors;
 			if (m_nbErrors >= m_maxErrorsCount)
 			{
-				std::osyncstream(std::cerr) << "\033[1;33mToo many errors displayed, following errors for this issue won't be displayed\033[0m\n";
+				std::cerr << "\033[1;33mToo many errors displayed, following errors for this issue won't be displayed\033[0m\n";
 				m_areTooManyErrors = true;
 			}
 			return;
@@ -55,7 +55,7 @@ namespace Kayou
 	{
 		KUNLIKELY if (!m_threadManagers.contains(queueName))
 		{
-			std::osyncstream(std::cerr) << "\033[1;31m[KThreads error] Wrong queue name when checking for finished, expect undefined behavior: " << queueName << "\033[0m\n";
+			std::cerr << "\033[1;31m[KThreads error] Wrong queue name when checking for finished, expect undefined behavior: " << queueName << "\033[0m\n";
 			return;
 		}
 

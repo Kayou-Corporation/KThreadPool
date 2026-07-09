@@ -11,6 +11,7 @@
 
 #if defined(KWINDOWS)
 #include <windows.h>
+#include <processthreadsapi.h>
 
 inline void SetThreadName(std::thread& t, const std::string& name)
 {

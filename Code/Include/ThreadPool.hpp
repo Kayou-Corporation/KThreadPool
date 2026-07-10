@@ -15,7 +15,7 @@ namespace Kayou
 		~ThreadPool();
 
 		void InitQueue(std::string_view queueName, uint8_t numThreads);
-		void EnqueueTask(std::string_view queueName, std::move_only_function<void()> task, Priority priority = Priority::High);
+		void EnqueueTask(std::string_view queueName, std::function<void()> task, Priority priority = Priority::High);
 		void WaitUntilQueueFinished(std::string_view queueName) const;
 		void WaitUntilAllFinished() const;
 		void ReleaseQueue(std::string_view queueName);

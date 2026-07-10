@@ -10,14 +10,14 @@ namespace Kayou
 		ThreadManager(std::string_view name, uint8_t numThreads);
 		~ThreadManager();
 
-		void Enqueue(std::move_only_function<void()> task, Priority priority = Priority::High);
+		void Enqueue(std::function<void()> task, Priority priority = Priority::High);
 		void WaitUntilFinished();
 
 	private:
 		std::vector<std::thread> m_threads;
 
-		std::queue<std::move_only_function<void()>> m_highPriorityTaskQueue;
-		std::queue<std::move_only_function<void()>> m_lowPriorityTaskQueue;
+		std::queue<std::function<void()>> m_highPriorityTaskQueue;
+		std::queue<std::function<void()>> m_lowPriorityTaskQueue;
 
 		std::mutex m_mutex;
 		std::mutex m_finishMutex;

@@ -32,7 +32,7 @@ namespace Kayou
 			m_taskQueue.pop();
 	}
 
-	void Thread::Enqueue(std::move_only_function<void()> task)
+	void Thread::Enqueue(std::function<void()> task)
 	{
 		m_tasksRemaining.fetch_add(1u, std::memory_order_release);
 		{
@@ -52,7 +52,7 @@ namespace Kayou
 	{
 		while (true)
 		{
-			std::move_only_function<void()> task;
+			std::function<void()> task;
 
 			{
 				std::unique_lock<std::mutex> lock(m_mutex);
@@ -71,7 +71,7 @@ namespace Kayou
 			}
 			catch (const std::exception& e)
 			{
-				std::osyncstream(std::cerr) << e.what() << '\n';
+				std::cerr << e.what() << '\n';
 			}
 
 			const uint32_t remaining = m_tasksRemaining.fetch_sub(1u, std::memory_order_acq_rel) - 1u;

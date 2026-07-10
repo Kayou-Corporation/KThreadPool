@@ -9,8 +9,17 @@
 
 #include <Platform.hpp>
 
-#if defined(KWINDOWS)
+#if defined(KLINUX) or defined(KCOMPILER_GCC)
+#include <pthread.h>
+
+inline void SetThreadName(std::thread& t, const std::string& name)
+{
+	pthread_setname_np(t.native_handle(), name.c_str());
+}
+
+#elif defined(KWINDOWS)
 #include <windows.h>
+#include <processthreadsapi.h>
 
 inline void SetThreadName(std::thread& t, const std::string& name)
 {
@@ -21,14 +30,6 @@ inline void SetThreadName(std::thread& t, const std::string& name)
 	{
 		SetThreadDescription(hThread, std::wstring(name.begin(), name.end()).c_str());
 	}
-}
-#endif
-#if defined(KLINUX)
-#include <pthread.h>
-
-inline void SetThreadName(std::thread& t, const std::string& name)
-{
-	pthread_setname_np(t.native_handle(), name.c_str());
 }
 #endif
 
